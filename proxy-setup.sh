@@ -7,7 +7,16 @@ PATCH_URL=http://10.120.0.9/Proxy_Certificates/certificate.crt
 PROXY=10.120.0.200:8080                # This is what regionals was
 
 RHEL(){
-    echo "rhel"
+    sudo yum install -y ca-certificates
+    # Install certificate
+    curl -o cert.crt "$PATCH_URL"
+    sudo cp cert.crt /etc/pki/ca-trust/source/anchors/
+    sudo update-ca-trust
+
+    # Configure proxy
+    echo "export http_proxy=\"$PROXY\"" >> ~/.bashrc
+    echo "export https_proxy=\"$PROXY\"" >> ~/.bashrc
+    source ~/.bashrc
 }
 
 DEBIAN(){
@@ -18,6 +27,8 @@ DEBIAN(){
     sudo update-ca-certificates
 
     #configure proxy
+    export http_proxy=\"$PROXY\"
+    export https_proxy=\"$PROXY\"
     echo "export http_proxy=\"$PROXY\"" >> ~/.bashrc
     echo "export https_proxy=\"$PROXY\"" >> ~/.bashrc
     source ~/.bashrc
@@ -32,7 +43,17 @@ UBUNTU(){
 }
 
 ALPINE(){
-    echo "alpine"
+    apk add --no-cache ca-certificates
+
+    # Install certificate
+    curl -o cert.crt "$PATCH_URL"
+    sudo cp cert.crt /usr/local/share/ca-certificates/
+    sudo update-ca-certificates
+
+    # Configure proxy
+    echo "export http_proxy=\"$PROXY\"" >> /etc/profile
+    echo "export https_proxy=\"$PROXY\"" >> /etc/profile
+    source /etc/profile
 }
 
 SLACK(){
