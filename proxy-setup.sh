@@ -23,7 +23,8 @@ RHEL(){
 
 DEBIAN(){
     # download and install certificate
-    sudo apt-get install -y ca-certificates curl
+    sudo apt-get install -y ca-certificates
+    sudo apt-get install -y curl
     curl -o cert.crt "$PATCH_URL"
     sudo cp cert.crt /usr/local/share/ca-certificates/
     sudo update-ca-certificates
