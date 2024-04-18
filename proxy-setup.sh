@@ -7,7 +7,7 @@ PATCH_URL=http://10.120.0.9/Proxy_Certificates/certificate.crt
 PROXY=10.120.0.200:8080                # This is what regionals was
 
 RHEL(){
-    
+    echo "rhel"
 }
 
 DEBIAN(){
@@ -32,7 +32,7 @@ UBUNTU(){
 }
 
 ALPINE(){
-    
+    echo "alpine"
 }
 
 SLACK(){
