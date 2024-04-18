@@ -13,10 +13,12 @@ RHEL(){
     sudo cp cert.crt /etc/pki/ca-trust/source/anchors/
     sudo update-ca-trust
 
-    # Configure proxy
-    echo "export http_proxy=\"$PROXY\"" >> ~/.bashrc
-    echo "export https_proxy=\"$PROXY\"" >> ~/.bashrc
-    source ~/.bashrc
+    # configure for yum
+    echo "proxy=http://$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
+    echo "proxy=https://$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
+
+    echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
 }
 
 DEBIAN(){
@@ -26,16 +28,13 @@ DEBIAN(){
     sudo cp cert.crt /usr/local/share/ca-certificates/
     sudo update-ca-certificates
 
-    #configure proxy
-    export http_proxy=\"$PROXY\"
-    export https_proxy=\"$PROXY\"
-    echo "export http_proxy=\"$PROXY\"" >> ~/.bashrc
-    echo "export https_proxy=\"$PROXY\"" >> ~/.bashrc
-    source ~/.bashrc
-
     #configure for apt
     echo "Acquire::http::Proxy \"$PROXY\";" | sudo tee -a /etc/apt/apt.conf >/dev/null
     echo "Acquire::https::Proxy \"$PROXY\";" | sudo tee -a /etc/apt/apt.conf >/dev/null
+
+    #configure for environment
+    echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
 }
 
 UBUNTU(){
@@ -51,9 +50,14 @@ ALPINE(){
     sudo update-ca-certificates
 
     # Configure proxy
-    echo "export http_proxy=\"$PROXY\"" >> /etc/profile
-    echo "export https_proxy=\"$PROXY\"" >> /etc/profile
-    source /etc/profile
+    echo "http://$PROXY/alpine/latest/main" | sudo tee -a /etc/apk/repositories >/dev/null
+    echo "https://$PROXY/alpine/latest/main" | sudo tee -a /etc/apk/repositories >/dev/null
+    echo "http://$PROXY/alpine/latest/community" | sudo tee -a /etc/apk/repositories >/dev/null
+    echo "https://$PROXY/alpine/latest/community" | sudo tee -a /etc/apk/repositories >/dev/null
+
+    #configure for environment
+    echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
 }
 
 SLACK(){
