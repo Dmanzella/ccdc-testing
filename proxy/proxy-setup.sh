@@ -3,18 +3,20 @@
 # Template credit to CPP
 
 #######################################################################
-# If certificate is not .pem, make sure to change it idk whats normal #
+# crt format is required for ubuntu #
 #######################################################################
 
-# PATCH_URL will need to be changed once correct path is known during comp
-PATCH_URL=http://10.120.0.9/Proxy_Certificates/certificate.pem
-PROXY=10.120.0.200:8080                # This is what regionals was
+# Prompt the user for the URL of the certificate file
+read -p "Enter the URL of the certificate file to download: (e.g., http://1.1.1.1/certificate.crt)" PATCH_URL
+
+# Prompt the user for the IP and port of the proxy
+read -p "Enter the IP and port of the proxy (e.g., 10.120.0.200:8080): " PROXY
 
 RHEL(){
     sudo yum install -y ca-certificates
     # Install certificate
-    curl -o cert.pem --proxy "http://$PROXY" "$PATCH_URL"
-    sudo cp cert.pem /etc/pki/ca-trust/source/anchors/
+    curl -o cert.crt --proxy "http://$PROXY" "$PATCH_URL"
+    sudo cp cert.crt /etc/pki/ca-trust/source/anchors/
     sudo update-ca-trust
 
     # configure for yum
@@ -29,8 +31,8 @@ DEBIAN(){
     # download and install certificate
     sudo apt-get install -y ca-certificates
     sudo apt-get install -y curl
-    curl -o cert.pem --proxy "http://$PROXY" "$PATCH_URL"
-    sudo cp cert.pem /usr/local/share/ca-certificates/
+    curl -o cert.crt --proxy "http://$PROXY" "$PATCH_URL"
+    sudo cp cert.crt /usr/local/share/ca-certificates/
     sudo update-ca-certificates
 
     #configure for apt
@@ -82,5 +84,3 @@ elif command -v apk >/dev/null ; then
 elif command -v slapt-get >/dev/null || (cat /etc/os-release | grep -i slackware) ; then
     SLACK
 fi
-
-
