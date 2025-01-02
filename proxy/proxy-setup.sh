@@ -66,7 +66,7 @@ ALPINE(){
 }
 
 SLACK(){
-    echo "its fucked I dont even know what slack is"
+    echo "good luck soldier"
 }
 
 if command -v yum >/dev/null ; then

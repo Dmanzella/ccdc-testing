@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Function to download proxy certificate file
+# NOTES #
+# This script will not work for browsers such as firefox, they will need to be configured manually"
+
+# download proxy certificate file
 download_certificate() {
     local PATCH_URL="$1"
     local CERTIFICATE_FILE="certificate.crt"
@@ -13,24 +16,35 @@ configure_proxy_certificate() {
     local DISTRIBUTION="$1"
     local CERTIFICATE_FILE="certificate.crt"
     local PROXY="10.120.0.200:8080"  # Update with your proxy settings
+    local CERT_DIR="/usr/local/share/ca-certificates/extra"
 
     case "$DISTRIBUTION" in
         "Ubuntu" | "Debian")
-            sudo apt-get update
-            sudo apt-get install -y ca-certificates
-            sudo cp "$CERTIFICATE_FILE" /usr/local/share/ca-certificates/
+        # Ubuntu must use .crt format
+            if [ ! -d "$CERT_DIR" ]; then
+                sudo mkdir -p "$CERT_DIR"
+            fi
+            sudo apt update
+            sudo apt  install -y ca-certificates
+            sudo cp "$CERTIFICATE_FILE" "$CERT_DIR"
             sudo update-ca-certificates
             echo "Acquire::http::Proxy \"$PROXY\";" | sudo tee -a /etc/apt/apt.conf >/dev/null
             echo "Acquire::https::Proxy \"$PROXY\";" | sudo tee -a /etc/apt/apt.conf >/dev/null
             ;;
         "Red Hat" | "CentOS" | "Fedora")
+            if [ ! -d "$CERT_DIR" ]; then
+                sudo mkdir -p "$CERT_DIR"
+            fi
             sudo yum install -y ca-certificates
-            sudo cp "$CERTIFICATE_FILE" /etc/pki/ca-trust/source/anchors/
+            sudo cp "$CERTIFICATE_FILE" "$CERT_DIR"
             sudo update-ca-trust
             ;;
         "Alpine")
+            if [ ! -d "$CERT_DIR" ]; then
+                sudo mkdir -p "$CERT_DIR"
+            fi
             apk add --no-cache ca-certificates
-            sudo cp "$CERTIFICATE_FILE" /usr/local/share/ca-certificates/
+            sudo cp "$CERTIFICATE_FILE" "$CERT_DIR"
             sudo update-ca-certificates
             ;;
         *)
