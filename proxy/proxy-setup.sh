@@ -31,18 +31,29 @@ PATH=$PATH:/usr/sbin/
 
 RHEL(){
     yum install -y ca-certificates
+    yum install -y curl
     # Install certificate
     curl -o cert.crt --proxy "$PROXY" "$PATCH_URL"
     cp cert.crt /etc/pki/ca-trust/source/anchors/
     update-ca-trust
 
     # configure for yum
-    #echo "proxy=http://$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
-    #echo "proxy=https://$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
+    echo "proxy=$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
 
+    # configure for environment
     #echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
     #echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    #echo "export ftp_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    #echo "export no_proxy=\"localhost,127.0.0.1\"" | sudo tee -a /etc/environment >/dev/null
+    source /etc/environment
+
+    # configure for bash
+    echo "export http_proxy=\"$PROXY\"" >> ~/.bashrc
+    echo "export https_proxy=\"$PROXY\"" >> ~/.bashrc
+    source ~/.bashrc
+    echo "If there are still issues, verify the http_proxy and https_proxy env variables were set (source ~/.bashrc)"
 }
+
 
 DEBIAN(){
     echo "Setting up proxy for debian"
@@ -79,7 +90,7 @@ DEBIAN(){
     echo "export http_proxy=\"$PROXY\"" >> ~/.bashrc
     echo "export https_proxy=\"$PROXY\"" >> ~/.bashrc
 
-    echo "If there are still issues, verify the http_proxy and https_proxy env variables were set"
+    echo "If there are still issues, verify the http_proxy and https_proxy env variables were set (source ~/.bashrc)"
     source ~/.bashrc
 }
 
@@ -88,6 +99,7 @@ UBUNTU(){
     DEBIAN
 }
 
+# TODO
 ALPINE(){
     apk add --no-cache ca-certificates
 
@@ -107,6 +119,7 @@ ALPINE(){
     echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
 }
 
+# not important
 SLACK(){
     echo "good luck soldier"
 }
