@@ -41,10 +41,10 @@ RHEL(){
     echo "proxy=$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
 
     # configure for environment
-    #echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
-    #echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
-    #echo "export ftp_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
-    #echo "export no_proxy=\"localhost,127.0.0.1\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export ftp_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    echo "export no_proxy=\"localhost,127.0.0.1\"" | sudo tee -a /etc/environment >/dev/null
     source /etc/environment
 
     # configure for bash
