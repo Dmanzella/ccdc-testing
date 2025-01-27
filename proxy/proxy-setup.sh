@@ -30,21 +30,26 @@ PEM_URL=http://192.168.1.107:9000/mitmproxy-ca-cert.pem
 PATH=$PATH:/usr/sbin/
 
 RHEL(){
+    echo "Setting up for RHEL"
     yum install -y ca-certificates
     yum install -y curl
     # Install certificate
     curl -o cert.crt --proxy "$PROXY" "$PATCH_URL"
+    curl -o cert.pem --proxy "$PROXY" "$PEM_URL"
     cp cert.crt /etc/pki/ca-trust/source/anchors/
+    cp cert.pem /etc/pki/ca-trust/source/anchors/
+    chmod +x /etc/pki/ca-trust/source/anchors/cert.crt
+    chmod +x /etc/pki/ca-trust/source/anchors/cert.pem
     update-ca-trust
 
     # configure for yum
     echo "proxy=$PROXY" | sudo tee -a /etc/yum.conf >/dev/null
 
     # configure for environment
-    echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
-    echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
-    echo "export ftp_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
-    echo "export no_proxy=\"localhost,127.0.0.1\"" | sudo tee -a /etc/environment >/dev/null
+    #echo "export http_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    #echo "export https_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    #echo "export ftp_proxy=\"$PROXY\"" | sudo tee -a /etc/environment >/dev/null
+    #echo "export no_proxy=\"localhost,127.0.0.1\"" | sudo tee -a /etc/environment >/dev/null
     source /etc/environment
 
     # configure for bash
